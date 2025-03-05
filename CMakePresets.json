@@ -1,0 +1,36 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 28,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "base",
+      "hidden": true,
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build",
+      "cacheVariables": {
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+      }
+    },
+    {
+      "name": "tests",
+      "displayName": "Build with Tests Enabled",
+      "description": "Configure project with Google Test integration",
+      "inherits": "base",
+      "cacheVariables": {
+        "ENABLE_TESTING": "ON"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "tests",
+      "displayName": "Build with Tests",
+      "configurePreset": "tests",
+      "jobs": 8
+    }
+  ]
+}

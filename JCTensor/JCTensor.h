@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <vector>
 #include <cstdint>
+#include <iostream>
 
 #if defined(__CUDACC__)
 #include <cuda_runtime_api.h>
@@ -21,7 +22,7 @@ private:
     void setENL()
     {
         this->elementCount = 1;
-        if (this->shape = nullptr)
+        if (this->shape == nullptr)
         {
             this->ndim = 0;
         }
@@ -36,44 +37,68 @@ private:
         this->len = this->elementSize * this->elementCount;
     }
 
+    void setStrides()
+    {
+
+    }
+
 public:
     /**
      * Raw Data pointer
      */
-    T* data = nullptr;
+    T* data = NULL;
     std::vector<uint64_t>* shape = nullptr;
     std::vector<uint64_t>* strides = nullptr;
     uint64_t elementCount;
     uint64_t ndim;
     uint64_t len;
-    constexpr int elementSize = sizeof(T);
+    const int elementSize = sizeof(T);
+    bool independent = true;
 
     JCTensor(T elem)
     {
+        this->independent = true;
         this->shape = nullptr;
         this->strides = nullptr;
         setENL();
 #if defined(__CUDACC__)
 #else
-        this->data = new T[1];
+        this->data = (T*) malloc(this->len);
         this->data[0] = elem;
 #endif
     }
 
-    JCTensor(std::vector<uint64_t>& shape)
+    JCTensor(uint64_t ndim)
     {
-        this->shape = new std::vector<uint64_t>(shapeInput)
+        this->shape = new std::vector<uint64_t>(shapeInput);
     }
 
     ~JCTensor()
     {
-        delete this->shape;
-        delete this->strides;
+        if (this->shape != nullptr)
+        {
+            delete this->shape;
+        }
+        if (this->strides != nullptr)
+        {
+            delete this->strides;
+        }
 #if defined(__CUDACC__)
 #else
-        delete[] this->data;
+        if (this->data != NULL)
+        {
+            free(this->data);
+        }
 #endif
     }
 
     
 };
+
+namespace jctensor {
+    template <typename T>
+    JCTensor<T> array(T scalar, uint64_t ndim = 0)
+    {
+
+    }
+}
