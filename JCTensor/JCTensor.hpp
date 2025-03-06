@@ -12,7 +12,7 @@
 #endif
 
 #include <CL/cl.hpp>
-//#include "../extern/CLBlast/include/clblast.h"
+#include "../extern/CLBlast/include/clblast.h"
 
 template <typename T>
 class JCTensor

@@ -4,8 +4,10 @@ project(JCTensor)
 
 option(ENABLE_TESTING "Enable testing" OFF)
 
+set(BUILD_SHARED_LIBS OFF)
+
 add_subdirectory(JCTensor)
-add_subdirectory(${CMAKE_SOURCE_DIR}/extern/CLBlast)
+# add_subdirectory(${CMAKE_SOURCE_DIR}/extern/CLBlast)
 
 if(ENABLE_TESTING)
     add_subdirectory(extern/googletest)

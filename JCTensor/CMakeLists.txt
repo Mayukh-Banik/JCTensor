@@ -12,7 +12,9 @@ add_library(JCTensor::JCTensor ALIAS JCTensor)
 
 find_package(OpenCL REQUIRED)
 
-target_link_libraries(JCTensor INTERFACE ${OpenCL_LIBRARIES})
-target_include_directories(JCTensor INTERFACE ${OpenCL_INCLUDE_DIRS})
-target_link_directories(JCTensor INTERFACE ${clblast})
-target_include_directories(JCTensor INTERFACE ${clblast}/include)
+target_link_libraries(${PROJECT_NAME} INTERFACE ${OpenCL_LIBRARIES})
+target_include_directories(${PROJECT_NAME} INTERFACE ${OpenCL_INCLUDE_DIRS})
+# target_link_directories(JCTensor INTERFACE ${clblast})
+# target_include_directories(JCTensor INTERFACE ${clblast}/include)
+
+target_link_libraries(${PROJECT_NAME} INTERFACE OpenCL::OpenCL)

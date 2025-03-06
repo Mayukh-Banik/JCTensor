@@ -28,8 +28,7 @@
     {
       "name": "tests",
       "displayName": "Build with Tests",
-      "configurePreset": "tests",
-      "jobs": 8
+      "configurePreset": "tests"
     }
   ]
 }
