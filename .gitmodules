@@ -1,3 +1,6 @@
-[submodule "googletest"]
+[submodule "extern/googletest"]
 	path = googletest
 	url = https://github.com/google/googletest.git
+[submodule "extern/CLBlast"]
+	path = extern/CLBlast
+	url = https://github.com/CNugteren/CLBlast.git

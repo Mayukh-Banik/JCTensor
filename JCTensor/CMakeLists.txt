@@ -9,3 +9,10 @@ target_include_directories(JCTensor
 )
 
 add_library(JCTensor::JCTensor ALIAS JCTensor)
+
+find_package(OpenCL REQUIRED)
+
+target_link_libraries(JCTensor INTERFACE ${OpenCL_LIBRARIES})
+target_include_directories(JCTensor INTERFACE ${OpenCL_INCLUDE_DIRS})
+target_link_directories(JCTensor INTERFACE ${clblast})
+target_include_directories(JCTensor INTERFACE ${clblast}/include)
