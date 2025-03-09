@@ -12,13 +12,11 @@
 #endif
 
 #include <CL/cl.hpp>
-#include "../extern/CLBlast/include/clblast.h"
 
 template <typename T>
 class JCTensor
 {
 private:
-
     /**
      * Sets element count, ndim, and len based on shape ptr
      */
@@ -40,6 +38,9 @@ private:
         this->len = this->elementSize * this->elementCount;
     }
 
+    /**
+     * Sets strides based on shape
+     */
     void setStrides()
     {
         if (this->shape == nullptr)
@@ -65,21 +66,23 @@ private:
                 }
             }
         }
-
     }
 
 public:
     /**
      * Raw Data pointer
      */
-    T* data = NULL;
-    std::vector<uint64_t>* shape = nullptr;
-    std::vector<uint64_t>* strides = nullptr;
+    T *data = NULL;
+    std::vector<uint64_t> *shape = nullptr;
+    std::vector<uint64_t> *strides = nullptr;
     uint64_t elementCount;
     uint64_t ndim;
     uint64_t len;
     const int elementSize = sizeof(T);
     bool independent = true;
+    cl::Device currentDevice;
+
+    JCTensor(cl::Device requestedDevice = cl::Device());
 
     JCTensor(T elem)
     {
@@ -87,15 +90,6 @@ public:
         this->shape = nullptr;
         this->strides = nullptr;
         setENL();
-#if defined(__CUDACC__)
-#else
-        this->data = (T*) malloc(this->len);
-		if (this->data == NULL)
-		{
-			throw std::runtime_error("Failed to allocate memory for JCTensor");
-		}
-        this->data[0] = elem;
-#endif
     }
 
     JCTensor(uint64_t ndim)
@@ -113,29 +107,25 @@ public:
         {
             delete this->strides;
         }
-#if defined(__CUDACC__)
-#else
-        if (this->data != NULL)
-        {
-            free(this->data);
-        }
-#endif
     }
 
-    
 };
 
-namespace jctensor {
-    std::vector<std::string> getOpenCLDeviceNames() {
+namespace jctensor
+{
+    std::vector<std::string> getOpenCLDeviceNames()
+    {
         std::vector<std::string> deviceNames;
         std::vector<cl::Platform> platforms;
         cl::Platform::get(&platforms);
 
-        for (const auto& platform : platforms) {
+        for (const auto &platform : platforms)
+        {
             std::vector<cl::Device> devices;
             platform.getDevices(CL_DEVICE_TYPE_ALL, &devices);
 
-            for (const auto& device : devices) {
+            for (const auto &device : devices)
+            {
                 std::string name = device.getInfo<CL_DEVICE_NAME>();
                 deviceNames.push_back(name);
             }
@@ -144,14 +134,58 @@ namespace jctensor {
         return deviceNames;
     }
 
-    template <typename T>
-    JCTensor<T> array(T scalar, uint64_t ndim = 0)
-    {
-
-    }
-
-    template <typename T>
-	JCTensor<T> array(std::vector<T> values, uint64_t ndim = 0)
+	std::vector<std::tuple<cl::Device, std::string, int>> setDeviceTable()
 	{
+		std::vector<std::tuple<cl::Device, std::string, int>> deviceTable;
+		std::vector<cl::Platform> platforms;
+		cl::Platform::get(&platforms);
+		int index = 0;
+		for (const auto& platform : platforms)
+		{
+			std::vector<cl::Device> devices;
+			platform.getDevices(CL_DEVICE_TYPE_ALL, &devices);
+			for (const auto& device : devices)
+			{
+				std::string deviceName;
+				device.getInfo(CL_DEVICE_NAME, &deviceName);
+				std::tuple<cl::Device, std::string, int> deviceInfo(device, deviceName, index);
+				deviceTable.push_back(deviceInfo);
+				index++;
+			}
+		}
+		return deviceTable;
 	}
-}
+};
+
+std::vector<std::tuple<cl::Device, std::string, int>> DeviceTable = jctensor::setDeviceTable();
+
+// namespace jctensor {
+//     std::vector<std::string> getOpenCLDeviceNames() {
+//         std::vector<std::string> deviceNames;
+//         std::vector<cl::Platform> platforms;
+//         cl::Platform::get(&platforms);
+
+//         for (const auto& platform : platforms) {
+//             std::vector<cl::Device> devices;
+//             platform.getDevices(CL_DEVICE_TYPE_ALL, &devices);
+
+//             for (const auto& device : devices) {
+//                 std::string name = device.getInfo<CL_DEVICE_NAME>();
+//                 deviceNames.push_back(name);
+//             }
+//         }
+
+//         return deviceNames;
+//     }
+
+//     template <typename T>
+//     JCTensor<T> array(T scalar, uint64_t ndim = 0)
+//     {
+
+//     }
+
+//     template <typename T>
+// 	JCTensor<T> array(std::vector<T> values, uint64_t ndim = 0)
+// 	{
+// 	}
+// }
