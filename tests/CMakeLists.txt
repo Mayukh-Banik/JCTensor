@@ -4,10 +4,11 @@
 
 file(GLOB_RECURSE SOURCE_FILES
     "*.cpp"
-    "*.cu"
+    # "*.cu"
 )
 
-project(tests LANGUAGES CXX CUDA)
+# project(tests LANGUAGES CXX CUDA)
+project(tests LANGUAGES CXX)
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 

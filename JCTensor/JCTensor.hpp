@@ -1,6 +1,6 @@
 #pragma once
 
-#define CL_TARGET_OPENCL_VERSION 300
+#define CL_HPP_TARGET_OPENCL_VERSION 300
 
 #include <stdlib.h>
 #include <vector>
@@ -8,10 +8,8 @@
 #include <iostream>
 #include <CL/opencl.hpp>
 
-
 namespace jctensor
 {
-
 	template <typename T>
 	class JCTensor
 	{
@@ -43,29 +41,29 @@ namespace jctensor
 		 */
 		void setStrides()
 		{
-			if (this->shape == nullptr)
-			{
-				this->strides = nullptr;
-			}
-			this->strides = new std::vector<uint64_t>();
-			if (this->shape->size() == 0)
-			{
-			}
-			else if (this->shape->size() == 1)
-			{
-				this->strides->push_back(this->elementSize);
-			}
-			else
-			{
-				for (uint64_t i = 0; i < this->strides->size(); i++)
-				{
-					this->strides->push_back(this->elementSize);
-					for (uint64_t j = i + 1; j < this->strides->size(); j++)
-					{
-						this->strides[i] *= this->shape[j];
-					}
-				}
-			}
+			// if (this->shape == nullptr)
+			// {
+			// 	this->strides = nullptr;
+			// }
+			// this->strides = new std::vector<uint64_t>();
+			// if (this->shape->size() == 0)
+			// {
+			// }
+			// else if (this->shape->size() == 1)
+			// {
+			// 	this->strides->push_back(this->elementSize);
+			// }
+			// else
+			// {
+			// 	for (uint64_t i = 0; i < this->strides->size(); i++)
+			// 	{
+			// 		this->strides->push_back(this->elementSize);
+			// 		for (uint64_t j = i + 1; j < this->strides->size(); j++)
+			// 		{
+			// 			this->strides[i] *= this->shape[j];
+			// 		}
+			// 	}
+			// }
 		}
 
 	public:
@@ -81,18 +79,18 @@ namespace jctensor
 		const int elementSize = sizeof(T);
 		bool independent = true;
 
-		JCTensor(T elem)
-		{
-			this->independent = true;
-			this->shape = nullptr;
-			this->strides = nullptr;
-			setENL();
-		}
+		// JCTensor(T elem)
+		// {
+		// 	this->independent = true;
+		// 	this->shape = nullptr;
+		// 	this->strides = nullptr;
+		// 	setENL();
+		// }
 
-		JCTensor(uint64_t ndim)
-		{
-			this->shape = new std::vector<uint64_t>(shapeInput);
-		}
+		// JCTensor(uint64_t ndim)
+		// {
+		// 	this->shape = new std::vector<uint64_t>(shapeInput);
+		// }
 
 		~JCTensor()
 		{
@@ -105,7 +103,27 @@ namespace jctensor
 				delete this->strides;
 			}
 		}
-
 	};
+
+	std::vector<std::tuple<cl::Platform, cl::Device>> allOpenCLCapablePlatformsNDevices();
+
+	std::vector<std::tuple<cl::Platform, cl::Device>> OpenCLCapabaleDevices = allOpenCLCapablePlatformsNDevices();
+
+	std::vector<std::tuple<cl::Platform, cl::Device>> allOpenCLCapablePlatformsNDevices()
+	{
+		std::vector<std::tuple<cl::Platform, cl::Device>> platformDevicePairs;
+		std::vector<cl::Platform> platforms;
+		cl::Platform::get(&platforms);
+		for (const auto &platform : platforms)
+		{
+			std::vector<cl::Device> devices;
+			platform.getDevices(CL_DEVICE_TYPE_ALL, &devices);
+			for (const auto &device : devices)
+			{
+				platformDevicePairs.emplace_back(platform, device);
+			}
+		}
+		return platformDevicePairs;
+	}
 
 };
