@@ -1,16 +1,13 @@
 #pragma once
 
+#define CL_TARGET_OPENCL_VERSION 300
+
 #include <stdlib.h>
 #include <vector>
 #include <cstdint>
 #include <iostream>
+#include <CL/opencl.hpp>
 
-#if defined(__CUDACC__)
-#include <cuda_runtime_api.h>
-#include <cuda_runtime.h>
-#elif defined(__HIPCC__)
-#include <hip_runtime_api.h>
-#endif
 
 namespace jctensor
 {
@@ -20,10 +17,6 @@ namespace jctensor
 	{
 
 	private:
-#if defined(__CUDACC__)
-		cudaDeviceProp properties;
-#elif defined(__HIPCC__)
-#endif
 		/**
 		 * Sets element count, ndim, and len based on shape ptr
 		 */
@@ -113,10 +106,6 @@ namespace jctensor
 			}
 		}
 
-		void setDevice(int deviceCount)
-		{
-			
-		}
 	};
 
 };
