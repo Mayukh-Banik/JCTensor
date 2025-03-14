@@ -2,11 +2,38 @@ JCTensor
 
 Requirements:
 
-OpenCL -> Just for hardware identification 
+SYCL:
 
-Intel/Nvidia use default OpenCL implementations
-
-AMD: use POCL, 
 ```
-sudo apt install pocl-opencl-icd pocl-opencl-dev python3-dev libpython3-dev build-essential ocl-icd-libopencl1 cmake git pkg-config libclang-dev clang llvm make ninja-build ocl-icd-libopencl1 ocl-icd-dev ocl-icd-opencl-dev libhwloc-dev zlib1g zlib1g-dev clinfo dialog apt-utils libxml2-dev libclang-cpp-dev libclang-cpp llvm-dev
+sudo -i
+
+apt upgrade && apt upgrade -y
+
+apt-get update && apt-get install -y \
+    git \
+    cmake \
+    g++ \
+    make \
+    libboost-all-dev \
+    ninja-build \
+    python3 \
+    python3-pip \
+    wget \
+    curl \
+    lsb-release \
+    gnupg \
+    software-properties-common \
+    llvm \
+    clang \
+    libclang-dev
+
+git clone https://github.com/AdaptiveCpp/AdaptiveCpp.git
+
+cd AdaptiveCpp
+
+mkdir build && cd build
+
+cmake ..
+
+make install -j ${nproc}
 ```
